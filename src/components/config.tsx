@@ -1,26 +1,133 @@
+import {
+  AmazonwebservicesOriginal,
+  CouchdbOriginal,
+  DockerOriginal,
+  JavaOriginal,
+  KubernetesPlain,
+  NodejsOriginal,
+  ReactOriginal,
+  RedisOriginal,
+  SpringOriginal,
+  TypescriptOriginal,
+} from "devicons-react";
+import {
+  ChartBarIcon,
+  ClipboardDocumentIcon,
+  CloudIcon,
+  DocumentIcon,
+  DocumentTextIcon,
+  PresentationChartLineIcon,
+  RocketLaunchIcon,
+} from "@heroicons/react/24/outline";
+
 export const headerItems = [
   {
-    label: "About",
-    page: "about",
+    label: "Blog",
+    page: "blog",
+    icon: <DocumentTextIcon />,
   },
   {
     label: "Projects",
     page: "projects",
+    icon: <PresentationChartLineIcon />,
   },
   {
-    label: "Experience",
-    page: "experience",
+    label: "Reach out",
+    page: "reach-out",
+    icon: <RocketLaunchIcon />,
+    inverted: true,
+  },
+];
+
+export const skills = [
+  {
+    title: "Java",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <JavaOriginal size={24} />,
   },
   {
-    label: "Skills",
-    page: "skills",
+    title: "Spring",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <SpringOriginal size={24} />,
   },
   {
-    label: "Blog",
-    page: "blog",
+    title: "Databases",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <RedisOriginal />,
   },
   {
-    label: "Contact",
-    page: "contact",
+    title: "NodeJS",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <NodejsOriginal />,
+  },
+  {
+    title: "Typescript",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <TypescriptOriginal size={24} />,
+  },
+  {
+    title: "React",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <ReactOriginal size={24} />,
+  },
+  {
+    title: "AWS",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <AmazonwebservicesOriginal />,
+  },
+  {
+    title: "Docker",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <DockerOriginal size={24} />,
+  },
+  {
+    title: "Kubernetes",
+    description: (
+      <>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas iste rem
+        optio quia perspiciatis obcaecati saepe in modi a culpa quae molestias,
+      </>
+    ),
+    icon: <KubernetesPlain size={24} />,
   },
 ];

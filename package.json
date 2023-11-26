@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
+    "devicons-react": "^1.2.6",
     "next": "14.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-social-icons": "^6.6.0"
   },
   "devDependencies": {
     "@heroicons/react": "^2.0.18",

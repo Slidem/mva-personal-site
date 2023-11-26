@@ -24,10 +24,10 @@ const MobileHeader = () => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="absolute top-20 left-0 w-full bg-sky-50 flex flex-col items-start flex-column items-center justify-items-center align-center">
+        <div className="absolute top-20 left-0 w-full bg-gradient-to-r from-gray-100 to-blue-100 flex flex-col items-start flex-column items-center justify-items-center align-center">
           {headerItems.map((link) => (
-            <div className="p-2 first:pt-4 last:pb-4">
-              <MobileHeaderLink page={link.page} label={link.label} />
+            <div className="p-2 first:pt-4 first:border-t first:border-white last:pb-4 w-full flex flex-col items-center justify-items-center align-center">
+              <MobileHeaderLink {...link} />
             </div>
           ))}
         </div>
