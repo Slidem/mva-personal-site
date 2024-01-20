@@ -1,0 +1,17 @@
+"use client";
+
+import Layout from "@/components/BlogPostLayout";
+
+export const meta = {
+  title: "Scheduled actions in dynamodb using TTLs",
+  shortTitle: "DynamoDB TTLs",
+  description: "Using dynamodb TTL fields is a great way to create scheudled actions in your application. This post shows how to use them and some of the pitfalls to avoid.",
+  shortDescription: "Scheduled actions in dynamodb using TTLs.",
+  publishDate: "07/28/2023",
+  canonicalUrl: "https://alextechspace.com/blog/scheduled-actions-in-dynamodb-using-ttls",
+  tags: ['dynamodb', 'aws'],
+};
+
+# Scheduled actions in dynamodb using TTLs
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

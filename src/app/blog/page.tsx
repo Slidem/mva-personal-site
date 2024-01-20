@@ -1,5 +1,16 @@
-import React from "react";
+import { BlogTableOfContents } from "@/components/BlogTableOfContents";
+import { getBlogPosts } from "@/common/blogPosts";
 
-export default function Blog() {
-  return <div>Welcome to my blog</div>;
+async function BlogPostPage() {
+  const tableOfContents = await getBlogPosts();
+
+  return (
+    <>
+      <div className="p-8 flex flex-col">
+        <BlogTableOfContents tableOfContents={tableOfContents} />
+      </div>
+    </>
+  );
 }
+
+export default BlogPostPage;

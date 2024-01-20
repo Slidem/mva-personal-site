@@ -1,14 +1,17 @@
 "use client";
 
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import MobileHeaderLink from "@/components/MobileHeaderLink";
 import { Transition } from "@headlessui/react";
-import { headerItems } from "@/components/config";
+import { headerItems } from "@/configs/landingPageContent";
 import { useState } from "react";
 
 const MobileHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const onClick = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div className="md:hidden block">
@@ -26,8 +29,11 @@ const MobileHeader = () => {
       >
         <div className="absolute top-20 left-0 w-full bg-gradient-to-r from-gray-100 to-blue-100 flex flex-col items-start flex-column items-center justify-items-center align-center">
           {headerItems.map((link) => (
-            <div className="p-2 first:pt-4 first:border-t first:border-white last:pb-4 w-full flex flex-col items-center justify-items-center align-center">
-              <MobileHeaderLink {...link} />
+            <div
+              key={link.label}
+              className="p-2 first:pt-4 first:border-t first:border-white last:pb-4 w-full flex flex-col items-center justify-items-center align-center"
+            >
+              <MobileHeaderLink {...link} onClick={onClick} />
             </div>
           ))}
         </div>
