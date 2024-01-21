@@ -1,5 +1,7 @@
-import Image from "next/image";
+"use client";
+
 import React from "react";
+import { useModalContext } from "./ModelContext";
 
 const zIndexMinusOne = {
   zIndex: "-1",
@@ -7,13 +9,36 @@ const zIndexMinusOne = {
 
 interface Props {
   title: string;
-  description: React.ReactNode;
+  description: string;
   icon: any;
+  modalContent?: React.ReactNode;
 }
 
-export const SkillsCard: React.FC<Props> = ({ title, description, icon }) => {
+export const SkillsCard: React.FC<Props> = ({
+  title,
+  description,
+  icon,
+  modalContent,
+}) => {
+  const { openModal } = useModalContext();
+
+  let cutDescription = description;
+
+  if (typeof description === "string") {
+    cutDescription =
+      (description as string).replace?.(/\s{2,}/g, " ").substring(0, 150) +
+      " ... ";
+  }
+
+  const isLongTitle = title.length > 15;
+
+  console.log(modalContent);
+
   return (
-    <div className="min-w-sm transform transition-transform duration-500 hover:scale-110 cursor-pointer">
+    <div
+      className="min-w-sm min-h-20 transform transition-transform duration-500 hover:scale-110 cursor-pointer"
+      onClick={() => openModal(modalContent)}
+    >
       <div
         className="relative flex flex-col items-center justify-around p-4 mr-4 rounded-2xl"
         style={{ transform: "translate(0px, 0px)", opacity: 1 }}
@@ -31,11 +56,17 @@ export const SkillsCard: React.FC<Props> = ({ title, description, icon }) => {
           style={zIndexMinusOne}
         ></div>
         <div className="flex flex-row items-center">
-          <h3 className="z-10 text-2xl font-semibold text-cyan-900">{title}</h3>
+          <h3
+            className={`z-10 ${
+              isLongTitle ? "text-sm" : "text-lg"
+            } font-semibold text-cyan-900`}
+          >
+            {title}
+          </h3>
           <div className="z-10 p-2 text-cyan-900">{icon}</div>
         </div>
         <div className="z-10 text-xs text-center text-gray-500 ">
-          {description}
+          {cutDescription}
         </div>
       </div>
     </div>

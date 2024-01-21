@@ -96,7 +96,7 @@ const hr = () => {
   return <div className="my-20" />;
 };
 
-export const projectsCustomComponents = {
+export const workCustomComponents = {
   h1: ProjectTitle,
   h2: H2,
   h3: H3,

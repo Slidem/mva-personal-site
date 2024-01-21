@@ -15,6 +15,17 @@ const nextConfig = {
     return config;
   },
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.credly.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
+
   experimental: {
     mdxRs: false,
   },

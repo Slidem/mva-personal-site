@@ -133,7 +133,7 @@ export const BlogTableOfContents: React.FC<{
         </div>
         <Pagination
           pages={totalPages}
-          currentPage={currentPage + 1}
+          currentPage={totalPages === 0 ? 0 : currentPage + 1}
           onNext={onNextPage}
           onPrevious={onPreviousPage}
         />
