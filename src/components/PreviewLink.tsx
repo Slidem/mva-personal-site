@@ -30,14 +30,20 @@ export const getLinkMeta = async (url: string) => {
 
 interface Props {
   url: string;
+  width?: number;
+  height?: number;
 }
 
-export const PreviewBadge: React.FC<Props> = async ({ url }) => {
+export const PreviewBadge: React.FC<Props> = async ({
+  url,
+  width = 180,
+  height = 240,
+}) => {
   const { href, title, imgUrl } = await getLinkMeta(url);
   return (
     <div className="relative py-4">
       <Link href={href} target="_blank">
-        <Image src={imgUrl} alt={title} width={"180"} height={"240"} />
+        <Image src={imgUrl} alt={title} width={width} height={height} />
       </Link>
     </div>
   );

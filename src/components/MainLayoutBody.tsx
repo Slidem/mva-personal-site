@@ -1,7 +1,7 @@
 "use client";
 
 import { Modal } from "@/components/Modal";
-import { ModalContextProvider } from "@/components/ModelContext";
+import { ModalContextProvider } from "@/components/ModalContext";
 import React from "react";
 import { SocialIcon } from "react-social-icons";
 

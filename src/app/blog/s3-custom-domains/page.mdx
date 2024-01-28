@@ -1,6 +1,4 @@
-"use client";
-
-import Layout from "@/components/BlogPostLayout";
+import Layout from "@/components/blog/BlogPostLayout";
 
 export const meta = {
   title: "How to setup S3 custom domains with CloudFront and CDK",
@@ -8,10 +6,253 @@ export const meta = {
   shortDescription: "S3 custom domains with CloudFront and CDK",
   description: "Using S3 custom domains has many benefits. In this article, we will see how to use S3 custom domains with CloudFront and CDK.",
   publishDate: "11/01/2023",
-  canonicalUrl: "https://alextechspace.com/blog/s3-custom-domain-with-cloudfront-and-cdk",
+  url: "s3-custom-domains",
+  canonicalUrl: "https://alextechspace.com/blog/s3-custom-domains",
   tags: ['aws', 'cdk', 'cloudfront', 's3'],
 };
 
-# S3 custom domain with CloudFront and CDK
+
+## Introduction
+This blog post will demonstrate how to set up custom domains and use AWS CloudFront to serve both public and private content from the same domain. Serving static content from custom domains has multiple benefits:
+- Enhances your product’s branding, as end users will not see an S3/CloudFront URL.
+- Improves SEO: custom domains can improve search engine optimization.
+- Increases flexibility: if you need to migrate your content to a different storage solution, the migration process will be much easier.
+
+## Motivation of writing this post
+We should always aim to make our codebase cleaner and easier to understand. As engineers, simplicity should be our priority, and we should avoid complexity whenever possible. One way to keep things simple is to serve all of our S3 content, whether public or private, from the same domain name.
+
+## Use case
+Suppose you have a web application that stores static content on S3. This content is publicly accessible to anyone on the internet. However, specific content that is related to users should only be accessible to a select few authorized users.
+As an additional security measure, only authorized users should be able to upload public content, even though it is accessible to anyone.
+
+## Solution
+To achieve our desired outcome and satisfy the use case mentioned above, we can use AWS CloudFront with custom domains. Here’s a brief summary of what we need to do:
+- First, we need an S3 bucket.
+- Next, we create a CloudFront distribution that points to the S3 bucket as the origin.
+- Then, we need to create a CloudFront Origin Access Identity (OAI) and modify the S3 bucket policy to allow access only from the OAI.
+- Because we’re using CloudFront together with signed URLs for both GET and PUT requests, we need to:
+- Store public content under the /public key inside the S3 bucket.
+- Store private content under the /private key inside the S3 bucket.
+- Create separate CloudFront behaviors for the /private and /public paths.
+- For /public paths, don’t restrict viewer access, and only allow GET methods.
+- For /private paths, restrict viewer access by only allowing CloudFront signed URLs with GET methods.
+- Create a separate CloudFront behavior for the /upload path and:
+- Restrict viewer access by only allowing signed URLs to access /upload.
+- Create a Cloudfront function for this behavior for “Origin request,” which will remove the /upload from the S3 key path, so that uploads will go to either /private or /public.
+- Create a CloudFront signer key group for signed URLs.
+- Finally, create ACM certificates for our custom domains and create CNAME records to point to them.
+
+Here’s a diagram just so we have a mental model of what we’re going to build:
+
+![diagram|800|400](/s3-custom-domains-diagram.webp)
+
+## A piece of code speaks a thousand words
+
+There’s no better way to describe our infrastructure than IaC (Infrastructure as Code). We’ll set up our infrastructure using AWS CDK and TypeScript. It’s worth noting that this can be accomplished using any other IaC provider (such as Terraform), or directly through the AWS Console or CLI.
+
+## Creating the bucket and the CloudFront origin
+
+```js
+const bucket = new s3.Bucket(this, `example-bucket`, {
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+      bucketName: `example-bucket-jjfkas77dld`,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+    });
+
+    /**
+     * Create oai
+     */
+    const oai = new cloudfront.OriginAccessIdentity(
+      this,
+      `example-oai`,
+      { comment: "Distribution oai" }
+    );
+    /**
+     * Add bucket policy to allow access to the bucket only through the oai
+     */
+    const oaiPolicy = new iam.PolicyStatement();
+    oaiPolicy.addActions(
+      "s3:GetBucket*",
+      "s3:GetObject*",
+      "s3:List*",
+      "s3:PutObject*"
+    );
+    oaiPolicy.addResources(bucket.bucketArn, `${bucket.bucketArn}/*`);
+    oaiPolicy.addCanonicalUserPrincipal(
+      oai.cloudFrontOriginAccessIdentityS3CanonicalUserId
+    );
+    bucket.addToResourcePolicy(oaiPolicy);
+```
+
+This command will create our example-bucket-jjfkas77dld. It will only allow access to this bucket from the OAI. Note that we are allowing PutObject operations because we also want to be able to upload files to this bucket through CloudFront using signed URLs.
+
+## Creating the CloudFront Function:
+
+```javascript
+/**
+ * Create the cloudfront function used to rewrite /upload/.* urls to /.*
+ */
+const viewerRequestFunction = new cloudfront.Function(
+  this,
+  `example-origin-request-function`,
+  {
+    code: cloudfront.FunctionCode.fromInline(`
+    function handler(event) {
+      var request = event.request;
+      request.uri = request.uri.replace(/^\\/upload\\//, "/");
+      return request;
+    }
+  `),
+    functionName: `example-origin-request-function`,
+  }
+);
+```
+
+This will create the CloudFront Function, which is used to rewrite any request to /upload/* to /*. It's worth mentioning that **CloudFront Functions** are much faster and cheaper than **Lambda@Edge** functions. With CloudFront Functions, you pay nothing for the execution time, and you only pay $0.10 for 1 million requests. To learn more about CloudFront Functions, you can check out this AWS blog post: https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/
+
+## Creating the cloudfront custom domain SSL certificate:
+
+```javascript
+/**
+ * Create the ACM for the origin custom domain
+ */
+const certificate = new acm.Certificate(
+  this,
+  `example-certificate`,
+  {
+    domainName: "example.customdomain.com",
+    validation: acm.CertificateValidation.fromDns(),
+  }
+);
+```
+
+Here, we assume that your domain registrar can be from any provider, not necessarily Route53. If you don’t specify the Hosted Zone in fromDns(), an SSL certificate will be created that you must manually validate. ACM will create the CNAME record that you need to add to your domain registrar. Detailed instructions for doing this are available in the AWS documentation: https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html
+
+**Important**: When using ACM with CloudFront, the certificate must be either imported or created in the us-east-1 region.
+
+## Creating CloudFront’s signing keys:
+
+```javascript
+/**
+ * Create aws cloudfront signing keys use to sign cloudfront urls
+ * Will be used for private content and uploads
+ */
+const publicKey = new cloudfront.PublicKey(
+  this,
+  `example-cloudfront-public-key`,
+  {
+    encodedKey: `${process.env.PUBLIC_KEY}`,
+  }
+);
+
+const keyGroup = new cloudfront.KeyGroup(
+  this,
+  `example-cloudfront-signing-group`,
+  {
+    items: [publicKey],
+  }
+);
+```
+To create the CloudFront signing keys, we need a public-private key pair. The private key is used to generate signatures, and the public key is used to verify them.
+
+### We can use the CLI to generate the key pairs.
+
+```bash
+openssl genrsa -out private_key.pem 2048
+
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+```
+In our example, we pass the public key as an environment variable (**PUBLIC_KEY**). When signing CloudFront URLs, we will need the **private key** and the **CloudFront public key ID**.
+
+## Creating the CloudFront distribution
+  
+```javascript
+/**
+ * Finally, create the cloudfront distribution
+ */
+const distribution = new cloudfront.CloudFrontWebDistribution(
+  this,
+  `example-distribution`,
+  {
+    viewerCertificate: {
+      aliases: [CUSTOM_DOMAIN],
+      props: {
+        acmCertificateArn: certificate.certificateArn,
+        sslSupportMethod: "sni-only",
+        minimumProtocolVersion: "TLSv1.1_2016",
+      },
+    },
+    originConfigs: [
+      {
+        s3OriginSource: {
+          s3BucketSource: bucket,
+          originAccessIdentity: oai,
+        },
+        behaviors: [
+          {
+            pathPattern: "/public/*",
+            allowedMethods:
+              cloudfront.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+          },
+          {
+            pathPattern: "/private/*",
+            allowedMethods:
+              cloudfront.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+            trustedKeyGroups: [keyGroup],
+          },
+          {
+            pathPattern: "/upload/public/*",
+            allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
+            trustedKeyGroups: [keyGroup],
+            functionAssociations: [
+              {
+                function: viewerRequestFunction,
+                eventType: FunctionEventType.VIEWER_REQUEST,
+              },
+            ],
+          },
+          {
+            pathPattern: "/upload/private/*",
+            allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
+            trustedKeyGroups: [keyGroup],
+            functionAssociations: [
+              {
+                function: viewerRequestFunction,
+                eventType: FunctionEventType.VIEWER_REQUEST,
+              },
+            ],
+          },
+          {
+            isDefaultBehavior: true,
+            trustedKeyGroups: [keyGroup],
+            allowedMethods: cloudfront.CloudFrontAllowedMethods.GET_HEAD,
+          },
+        ],
+      },
+    ],
+  }
+);
+```
+
+Finally, we are creating a CloudFront distribution with the following behaviours:
+- **/public** → All GET requests to /public will be allowed.
+- **/private** → GET requests to /private are allowed only if the URL is signed.
+- **/upload** → All HTTP methods are allowed if the URL is signed. The /upload behaviour also has the CloudFront function associated with it so that the URLs with /upload/* are rewritten to /*. This means that if we want to upload files to the public folder, we would use **/upload/public/example.jpg**.
+
+We also have a default behaviour, which states that any other GET requests that don’t match the other 3 behaviours’ paths need to be signed.
+
+**! Let’s not forget the most important part**: create the CNAME that will point to your CloudFront distribution. Go to your domain registrar, and create a CNAME that points to your cloudfront distribution url. You can see your CloudFront distribution url after you’ve created it, by going to AWS console to CloudFront > Distributions, click on your newly created CloudFront distribution, and you should see the domain name.
+
+![cloudfront-distribution-url|400|600](/s3-custom-domains-snp2.webp)
+
+Now we can sign CloudFront URLs using the private key and public key ID we created earlier.
+
+```bash
+aws cloudfront sign --url https://your.customdomain.com/private/test.png --key-pair-id K34SKX1PUCMGND --private-key file://private_key.pem --date-less-than "2023-04-14T19:00:00"
+```
+
+This can also be achieved programmatically through code, using your language of choice. You can find a full example of the CDK stack and examples in TypeScript on how to sign CloudFront URLs [here](https://github.com/Slidem/cloudfront-custom-domains-example).
+
+Hope this helps! Happy coding!
 
 export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

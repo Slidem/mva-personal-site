@@ -20,10 +20,13 @@
     "node-html-parser": "^6.1.12",
     "react": "^18",
     "react-dom": "^18",
-    "react-social-icons": "^6.6.0"
+    "react-social-icons": "^6.6.0",
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
     "@heroicons/react": "^2.0.18",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

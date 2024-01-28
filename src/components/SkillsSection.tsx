@@ -7,7 +7,7 @@ import { skills } from "@/configs/landingPageContent";
 
 export const SkillsSection = () => {
   return (
-    <section className="p-10 md:p-20 md:py-48 flex-col bg-sky-100">
+    <section className="p-20 md:py-48 flex-col bg-sky-100">
       <div className="flex flex-col lg:flex-row items-center gap-4 md:gap-20">
         <div className="min-w-[300px] min-h-[300px] md:w-1/4 p-2 mb-4 md:mb-0">
           <div className="text-center">

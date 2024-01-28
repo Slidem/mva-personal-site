@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 
 import { BlogPostMetadata } from "@/models.ts/blog";
-import { Pagination } from "./Pagination";
+import { Pagination } from "../Pagination";
+import { useRouter } from "next/navigation";
 
 const maxItemsPerPage = 5;
 
@@ -12,6 +13,7 @@ export const BlogTableOfContents: React.FC<{
 }> = ({ tableOfContents }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchInput, setSearchInput] = useState("");
+  const router = useRouter();
 
   const filteredTableOfContents = tableOfContents.filter((item: any) => {
     return item.title.toLowerCase().includes(searchInput.toLowerCase());
@@ -88,6 +90,7 @@ export const BlogTableOfContents: React.FC<{
                 description,
                 shortDescription,
                 publishDate,
+                url,
                 tags,
               }) => {
                 return (
@@ -95,6 +98,7 @@ export const BlogTableOfContents: React.FC<{
                     <div
                       key={title}
                       className="w-full h-56 transform transition-transform duration-500 hover:scale-110 cursor-pointer bg-blue-800 rounded overflow-hidden shadow-lg bg-[url('/blog-card.png')] bg-cover bg-center bg-no-repeat"
+                      onClick={() => router.push(`/blog/${url}`)}
                     >
                       <div className="mt-4 flex flex-row">
                         <div className="p-2 px-8 font-bold bg-sky-800 text-xl mb-2 text-white flex-grow">

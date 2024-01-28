@@ -4,6 +4,7 @@ export interface BlogPostMetadata {
   description: string;
   shortDescription: string;
   publishDate: string;
+  url?: string;
   canonicalUrl: string;
   tags: string[];
 }

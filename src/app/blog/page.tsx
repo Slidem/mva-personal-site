@@ -1,5 +1,10 @@
-import { BlogTableOfContents } from "@/components/BlogTableOfContents";
+import { BlogTableOfContents } from "@/components/blog/BlogTableOfContents";
 import { getBlogPosts } from "@/common/blogPosts";
+
+export const metadata = {
+  title: "Blog",
+  description: "Mihai V Alexandru - Tech Blog",
+};
 
 async function BlogPostPage() {
   const tableOfContents = await getBlogPosts();

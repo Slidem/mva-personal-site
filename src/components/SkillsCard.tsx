@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useModalContext } from "./ModelContext";
+import { useModalContext } from "./ModalContext";
 
 const zIndexMinusOne = {
   zIndex: "-1",
@@ -26,13 +26,11 @@ export const SkillsCard: React.FC<Props> = ({
 
   if (typeof description === "string") {
     cutDescription =
-      (description as string).replace?.(/\s{2,}/g, " ").substring(0, 150) +
+      (description as string).replace?.(/\s{2,}/g, " ").substring(0, 100) +
       " ... ";
   }
 
   const isLongTitle = title.length > 15;
-
-  console.log(modalContent);
 
   return (
     <div

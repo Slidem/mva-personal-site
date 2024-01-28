@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { useModalContext } from "./ModelContext";
+import { useModalContext } from "./ModalContext";
 
 export const Modal = () => {
   const { isModalOpen, closeModal, modalContent } = useModalContext();
