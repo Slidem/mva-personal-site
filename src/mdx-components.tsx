@@ -24,7 +24,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const language = className?.replace(/language-/, "") || "javascript";
       return (
         <SyntaxHighlighter language={language} style={{ ...dracula }}>
-          {children}
+          {children as string}
         </SyntaxHighlighter>
       );
     },
