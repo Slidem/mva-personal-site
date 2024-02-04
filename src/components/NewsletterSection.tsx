@@ -15,7 +15,7 @@ export const NewsletterSection: React.FC<Props> = ({
   mostRecentBlogPostsNumber,
 }) => {
   return (
-    <section className="p-20 sm:p-36 md:p-48 md:py-48 flex flex-col gap-4">
+    <section className="p-20 sm:p-36 md:p-48 md:py-48 flex flex-col gap-4 items-center">
       <h2 className="text-2xl font-bold text-gray-800 mb-5 text-center">
         I share knowledge and insights frequently 🚀
       </h2>
@@ -31,13 +31,14 @@ export const NewsletterSection: React.FC<Props> = ({
         <h2 className="">Most recent blog posts ...</h2>
       </div>
       <div
-        className={`mt-7 grid grid-cols-1 xl:grid-cols-${mostRecentBlogPostsNumber} gap-12 p-8 lg:p-0`}
+        className={`mt-7 grid grid-cols-1 lg:grid-cols-2 gap-12 p-8 lg:p-0 max-w-[1200px]`}
       >
         {mostRecentBlogPosts.map((post: any) => (
           <BlogCard
             key={post.title}
             title={post.shortTitle}
             description={post.shortDescription}
+            url={post.url}
           />
         ))}
       </div>

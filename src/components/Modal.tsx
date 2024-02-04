@@ -27,11 +27,11 @@ export const Modal = () => {
     <div
       className={`${
         isModalOpen ? "fixed" : "hidden"
-      } inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-500 z-50`}
+      } inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-500 z-50 `}
     >
       <div
         ref={modalRef}
-        className="relative bg-white rounded-lg shadow-lg transform transition-transform duration-500 scale-0 sm:scale-100 max-w-3xl m-4 p-5 sm:p-20 space-y-10 flex flex-col items-center justify-center"
+        className="relative bg-white rounded-lg shadow-lg transform transition-transform duration-500 scale-100 max-w-3xl m-4 p-5 sm:p-20 space-y-10 flex flex-col items-center justify-center max-h-[calc(100vh-60px)] overflow-y-auto"
       >
         {modalContent}
         <button

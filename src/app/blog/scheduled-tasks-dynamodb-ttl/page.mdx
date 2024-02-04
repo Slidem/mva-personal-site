@@ -1,0 +1,83 @@
+import Layout from "@/components/blog/BlogPostLayout";
+
+export const meta = {
+  title: "Scheduled tasks in DynamoDB using TTLs and Streams",
+  shortTitle: "Scheduled tasks with DynamoDB TTL",
+  description: "Have you considered using DynamoDB's Time to Live (TTL) feature in conjunction with DynamoDB Streams as a flexible and customizable alternative to traditional cron jobs?",
+  shortDescription: "Scheduled tasks in DynamoDB using TTLs and Streams.",
+  publishDate: "02/04/2024",
+  canonicalUrl: "https://alextechspace.com/blog/scheduled-triggers-dynamodb-ttl",
+  tags: ['dynamodb', 'aws'],
+  url: "scheduled-tasks-dynamodb-ttl",
+};
+
+Have you considered using DynamoDB's Time to Live (TTL) feature in conjunction with DynamoDB Streams as a flexible and customizable alternative to traditional cron jobs? This approach not only simplifies scheduling tasks but also offers a more dynamic way to manage them.
+
+## Traditional Cron Jobs and Their Limitations
+
+Traditionally, setting up cron jobs in AWS presents a few options:
+
+- **CloudWatch Events**: The go-to method for scheduling tasks, allowing for periodic events to trigger various targets, commonly Lambdas or ECS tasks for longer operations. However, this method can be restrictive due to Lambda's 15-minute execution limit and the overhead of managing ECS tasks.
+- **Linux Cron Jobs**: A more universal approach, (that's not necessarily limited to AWS) using the crontab on a Linux machine (e.g., an EC2 instance) to execute commands at specific times and intervals.
+
+Both methods rely on a process running at a predetermined rate to invoke another process (A lambda, ECS task, etc.).
+
+## A Real-World Scenario
+
+Imagine you have an application where users sign up to receive email reminders with tips on using your product. You want to send these reminders one day and one week after their sign-up. A traditional approach would involve setting up a daily CloudWatch event triggering a Lambda function to scan user sign-ups and dispatch notifications accordingly. However, this method runs regardless of user activity, leading to potential resource wastage.
+If you don't have any new users for a while, the Lambda function will still run every day, scanning the entire user base for new sign-ups, even if there are none.
+
+![cron-job-scenario|800|600](/cron-job-scenario.png)
+
+## Introducing DynamoDB Streams and TTLs for Task Scheduling
+
+DynamoDB offers a TTL (time to live) attribute for items, representing an epoch date in seconds. When the current date surpasses this TTL, DynamoDB schedules the item for deletion. This process, while eventual, is automatic and free.
+
+DynamoDB Streams capture changes (Change Data Capture, CDC) to items, allowing for actions (e.g., Lambda functions) to be triggered in response. This combination provides a powerful tool for scheduling and executing tasks based on specific timing without the constant overhead of traditional cron jobs.
+
+## The Process
+
+1. **Schedule Tasks by Adding Items**: Items added to a DynamoDB table contain a TTL for when the task should be triggered and possibly additional metadata.
+2. **Automatic Deletion Triggers Action**: Upon reaching the TTL, items are deleted, with this deletion, the event is captured by DynamoDB Streams.
+3. **Lambda Consumption**: A Lambda function attached to the stream is invoked, performing the scheduled task (e.g., sending a notification).
+
+![ttl-process|800|600](/ttl-process.png)
+
+
+## One major drawback 😔
+
+One major drawback of this approach is that the **SLA on the TTL is not guaranteed**. It can take **up to 48 hours for an item to be deleted after the TTL has expired**. 
+This is because DynamoDB uses a background process to scan the table and delete expired items.
+
+In my experience, it usually takes a few minutes (the most I've seen is around 30 minutes), but it's important to be aware of this limitation.
+The size of the table and the number of expired items can affect the time it takes for the items to be deleted.
+
+If you keep the table small and the number of expired items low, you should be able to rely on the TTL to trigger your scheduled tasks within a few minutes.
+
+
+## Benefits and Considerations
+
+Want to make this a recurrent event ? Simply add back the item with the next scheduled date. This is beautiful as you control the notification not on read, but on write. You specify exactly when you want your trigger to happen, and you don’t have to worry about running a job constantly to check through your data.
+
+Another great thing about this approach is, that if let’s say new users stop signing in, that’s it, there is no lambda running, or process checking to see if new users just signed up.
+
+Of course, costs can get high if you have an incredibly high amount of different types of scheduled triggers, but most likely it’s not the case, as people usually do cronjobs or scheduled triggers to create reports, send notifications in batches etc.
+
+So if you know the table for scheduled actions is not big, using an on demand DynamoDB price model is great, keeping your costs at a minimum when you don't have any new triggers to schedule.
+
+***
+
+If you want to deep dive into this topic, I highly recommend reading the following AWS documentation:
+- [DynamoDB Time to Live (TTL)](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-how-to.html)
+- [DynamoDB Streams](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html)
+- [Cron Jobs in AWS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html)
+- [DynamoDB Pricing](https://aws.amazon.com/dynamodb/pricing/on-demand/)
+
+***
+
+### Thank you for reading! 🙏
+
+Hope this was useful to you, and if you have any questions, feel free to [reach out](/#connect).
+
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

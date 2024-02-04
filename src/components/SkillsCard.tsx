@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { JSXElementConstructor, ReactElement } from "react";
+
+import { useCertBadges } from "./CertBadgesProvider";
 import { useModalContext } from "./ModalContext";
 
 const zIndexMinusOne = {
@@ -11,7 +13,7 @@ interface Props {
   title: string;
   description: string;
   icon: any;
-  modalContent?: React.ReactNode;
+  modalContent: (certBadges?: any) => JSX.Element;
 }
 
 export const SkillsCard: React.FC<Props> = ({
@@ -21,6 +23,7 @@ export const SkillsCard: React.FC<Props> = ({
   modalContent,
 }) => {
   const { openModal } = useModalContext();
+  const { certBadges } = useCertBadges();
 
   let cutDescription = description;
 
@@ -35,7 +38,7 @@ export const SkillsCard: React.FC<Props> = ({
   return (
     <div
       className="min-w-sm min-h-20 transform transition-transform duration-500 hover:scale-110 cursor-pointer"
-      onClick={() => openModal(modalContent)}
+      onClick={() => openModal(modalContent(certBadges))}
     >
       <div
         className="relative flex flex-col items-center justify-around p-4 mr-4 rounded-2xl"

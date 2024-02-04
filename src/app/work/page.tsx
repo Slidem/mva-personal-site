@@ -29,35 +29,17 @@ export default function Work() {
           <div className="pb-20 flex flex-col items-center gap-4">
             <div>
               <h1 className="text-md font-light text-justify italic">
-                With over nine years of experience as a Senior Software
-                Engineer, I've honed a deep expertise in full-stack development,
-                cloud computing, and software architecture.{" "}
+                I'm a software engineer working as an independent contractor.
+                I've worked with companies of all sizes, from startups to large
+                enterprises.
               </h1>
             </div>
             <div>
               <h2 className="text-md font-light text-justify italic">
                 My journey in tech has been marked by significant contributions
                 to diverse projects, ranging from SaaS platforms to large-scale
-                cloud migrations and complex microservices architectures. My
-                passion lies in leveraging cutting-edge technologies like Java,
-                React, NextJS, TypeScript, AWS, and GCP to create scalable,
-                efficient solutions.{" "}
+                cloud migrations and complex microservices architectures.
               </h2>
-            </div>
-            <div>
-              <h2 className="text-md font-light text-justify italic">
-                My journey also led me to deeply understand cloud development,
-                such that I've pursued certification in both AWS and Kubernetes:{" "}
-                <br />
-              </h2>
-            </div>
-            <div className="flex flex-row flex-wrap justify-center  max-w-xl">
-              <PreviewBadge url="https://www.credly.com/badges/d8da6041-f578-42dd-9754-a26dd1a11f0d?source=linked_in_profile" />
-              <PreviewBadge url="https://www.credly.com/badges/91d5dd1e-ddd3-41db-a937-c3b846d32c00/linked_in_profile" />
-              <PreviewBadge url="https://www.credly.com/badges/c5c6eeab-a720-46d8-bd8f-d0fdc1c7c682/linked_in_profile" />
-              <PreviewBadge url="https://www.credly.com/badges/8bc10a4f-45bc-4ef4-a7f7-12c69688c098/linked_in_profile" />
-              <PreviewBadge url="https://www.credly.com/badges/2e591128-9d7c-4072-b0f7-a2268521a792?source=linked_in_profile" />
-              <PreviewBadge url="https://www.credly.com/badges/443ab1bd-64f0-40ca-8ed3-833c36f9f309?source=linked_in_profile" />
             </div>
             <div>
               <h2 className="text-md font-light text-justify italic">

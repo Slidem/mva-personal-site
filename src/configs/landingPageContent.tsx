@@ -1,8 +1,6 @@
 import {
   AmazonwebservicesOriginal,
-  DockerOriginal,
   JavaOriginal,
-  KubernetesPlain,
   NodejsOriginal,
   ReactOriginal,
 } from "devicons-react";
@@ -16,8 +14,6 @@ import {
   ServerStackIcon,
   WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
-
-import { PreviewBadge } from "@/components/PreviewLink";
 
 export const headerItems = [
   {
@@ -53,7 +49,13 @@ export const SkillModalTitle = ({ title, icon, experience }: any) => {
   );
 };
 
-export const skills = [
+export const skills: {
+  title: string;
+  description: string;
+  icon: any;
+  modalContent: (certBadges?: any) => JSX.Element;
+  experience?: string;
+}[] = [
   {
     title: "Java",
     description: `
@@ -62,7 +64,7 @@ export const skills = [
         of Java, but I've also worked with various frameworks and libraries like
         Spring, Dropwizard, Maven, Gradle, Hibernate.
       `,
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"Java"}
@@ -95,7 +97,7 @@ export const skills = [
         <ServerStackIcon />
       </div>
     ),
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"Microservices"}
@@ -139,7 +141,7 @@ export const skills = [
         <CircleStackIcon />
       </div>
     ),
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"Databases"}
@@ -167,29 +169,38 @@ export const skills = [
          while also investing heavily on deepening my knowledge, by obtaining the various AWS certifications.
       `,
     icon: <AmazonwebservicesOriginal size={24} />,
-    modalContent: (
-      <div className="w-full flex flex-col gap-4 items-center">
-        <SkillModalTitle
-          title={"AWS"}
-          icon={<AmazonwebservicesOriginal />}
-          experience={"4+ years"}
-        />
-        <p className="text-justify">
-          I've been heavily involved in cloud development in the past 4 years,
-          working with various AWS services and architectures, both serverless
-          and containerized.
-        </p>
-        <p className="text-justify">
-          I've worked with various AWS services like{" "}
-          <b>
-            Lambda, DynamoDB, SQS, SNS, S3, API Gateway, CloudFormation, CDK
-          </b>
-          , while also investing heavily on deepening my knowledge, by obtaining
-          the various AWS certifications, one of the most significant being the{" "}
-          <b>AWS Certified Solutions Architect - Professional</b>.
-        </p>
-      </div>
-    ),
+    modalContent: (certBadges?: any) => {
+      return (
+        <div className="w-full flex flex-col gap-4 items-center max-w-[calc(100vh - 80px)] overflow-y-auto">
+          <SkillModalTitle
+            title={"AWS"}
+            icon={<AmazonwebservicesOriginal />}
+            experience={"4+ years"}
+          />
+          <p className="text-justify">
+            I've been heavily involved in cloud development in the past 4 years,
+            working with various AWS services and architectures, both serverless
+            and containerized.
+          </p>
+          <p className="text-justify">
+            I've worked with various AWS services like{" "}
+            <b>
+              Lambda, DynamoDB, SQS, SNS, S3, API Gateway, CloudFormation, CDK
+            </b>
+            , while also investing heavily on deepening my knowledge, by
+            obtaining the various AWS certifications, one of the most
+            significant being the{" "}
+            <b>AWS Certified Solutions Architect - Professional</b>.
+          </p>
+          <div className="flex flex-row flex-wrap w-full items-center justify-center">
+            {certBadges.aws_arch_professional}
+            {certBadges.aws_sysops_associate}
+            {certBadges.aws_dev_associate}
+            {certBadges.aws_arch_associate}
+          </div>
+        </div>
+      );
+    },
   },
   {
     title: "NodeJS",
@@ -201,7 +212,7 @@ export const skills = [
         various deployment tasks.
       `,
     icon: <NodejsOriginal />,
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"NodeJS"}
@@ -226,7 +237,7 @@ export const skills = [
         Zustand. 
         `,
     icon: <ReactOriginal size={24} />,
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"React"}
@@ -253,8 +264,8 @@ export const skills = [
         <CloudIcon />
       </div>
     ),
-    modalContent: (
-      <div className="w-full flex flex-col gap-4 items-center">
+    modalContent: (certBadges?: any) => (
+      <div className="w-full flex flex-col gap-4 items-center max-w-[calc(100vh - 80px)] overflow-y-auto">
         <SkillModalTitle
           title={"Cloud Technologies"}
           icon={
@@ -268,6 +279,14 @@ export const skills = [
           also with open source technologies like{" "}
           <b>Kubernetes, Docker, Helm</b>.
         </p>
+        <div className="flex flex-row flex-wrap w-full items-center justify-center">
+          {certBadges.aws_arch_professional}
+          {certBadges.aws_sysops_associate}
+          {certBadges.aws_dev_associate}
+          {certBadges.aws_arch_associate}
+          {certBadges.cka}
+          {certBadges.ckad}
+        </div>
       </div>
     ),
   },
@@ -286,7 +305,7 @@ export const skills = [
         <WrenchScrewdriverIcon />
       </div>
     ),
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"CI / CD"}
@@ -324,7 +343,7 @@ export const skills = [
         <EllipsisHorizontalCircleIcon />
       </div>
     ),
-    modalContent: (
+    modalContent: () => (
       <div className="w-full flex flex-col gap-4 items-center">
         <SkillModalTitle
           title={"Other"}

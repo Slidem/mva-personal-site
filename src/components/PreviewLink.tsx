@@ -3,7 +3,9 @@ import Link from "next/link";
 import parse from "node-html-parser";
 
 export const getLinkMeta = async (url: string) => {
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    mode: "no-cors",
+  });
   const body = await response.text();
 
   const rootElement = await parse(body);
